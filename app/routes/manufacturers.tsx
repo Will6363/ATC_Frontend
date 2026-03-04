@@ -1,9 +1,50 @@
 import { Form, useNavigation } from "react-router";
+import * as schema from "~/database/schema";
+import type { Route } from "./+types/home";
+import { database } from "~/database/context";
 
 // import logoDark from "./logo-dark.svg";
 // import logoLight from "./logo-light.svg";
 
-export function Welcome({
+export async function action({ request }: Route.ActionArgs) {
+  const formData = await request.formData();
+  let name = formData.get("name");
+  let manufacturerId = formData.get("manufacturerId");
+  if (typeof name !== "string" || typeof manufacturerId !== "string") {
+    return { manufacturerError: "manufacturerId and name are required" };
+  }
+
+  name = name.trim();
+  manufacturerId = manufacturerId.trim();
+  if (!name || !manufacturerId) {
+    return { manufacturerError: "manufacturerId and name are required" };
+  }
+
+  const db = database();
+  try {
+    await db.insert(schema.manufacturers).values({ manufacturerId, name });
+  } catch (error) {
+    return { manufacturerError: "manufacturerId and name are required" };
+  }
+}
+
+export async function loader({ context }: Route.LoaderArgs) {
+  const db = database();
+
+  const manufacturers = await db.query.manufacturers.findMany({
+    columns: {
+      manufacturerId: true,
+      name: true,
+    },
+  });
+
+  return {
+    manufacturers,
+    message: context.VALUE_FROM_EXPRESS,
+  };
+}
+
+export function ManufacturerInput({
   manufacturer,
   manufacturerError,
   message,

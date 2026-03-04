@@ -1,0 +1,23 @@
+.tab{
+    padding: 1px 1px;
+    font-size: 14px;
+    font-weight: 500;
+    border-bottom-width: 2px;
+    transition: all 0.2s ease;
+}
+
+.active{
+  border-color: blue;
+  color: blue;
+}
+
+.inactive{
+  border-color: transparent;
+  color: gray;
+}
+
+.inactive:hover{
+  color: #374151;
+}
+
+/* py-1 px-1 border-b-2 font-medium text-sm */

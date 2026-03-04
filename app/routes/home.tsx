@@ -1,8 +1,10 @@
-import { database } from "~/database/context";
-import * as schema from "~/database/schema";
+// import { database } from "~/database/context";
+// import * as schema from "~/database/schema";
 
 import type { Route } from "./+types/home";
-import { Welcome } from "../welcome/welcome";
+// import { Welcome } from "../welcome/welcome";
+import { TabSelector } from "~/components/tabsSelector";
+import { Outlet } from "react-router";
 
 export function meta({}: Route.MetaArgs) {
   return [
@@ -11,50 +13,21 @@ export function meta({}: Route.MetaArgs) {
   ];
 }
 
-export async function action({ request }: Route.ActionArgs) {
-  const formData = await request.formData();
-  let name = formData.get("name");
-  let email = formData.get("email");
-  if (typeof name !== "string" || typeof email !== "string") {
-    return { guestBookError: "Name and email are required" };
-  }
+const tabsArray = [
+  { id: 'manufacturers', label: 'Manufacture', to: '/manufacturers' },
+  { id: 'engines', label: 'Engine', to:'/engines' },
+  { id: 'models', label: 'Model', to:'/models' }
+]
 
-  name = name.trim();
-  email = email.trim();
-  if (!name || !email) {
-    return { guestBookError: "Name and email are required" };
-  }
-
-  const db = database();
-  try {
-    await db.insert(schema.guestBook).values({ name, email });
-  } catch (error) {
-    return { guestBookError: "Error adding to guest book" };
-  }
-}
-
-export async function loader({ context }: Route.LoaderArgs) {
-  const db = database();
-
-  const guestBook = await db.query.guestBook.findMany({
-    columns: {
-      id: true,
-      name: true,
-    },
-  });
-
-  return {
-    guestBook,
-    message: context.VALUE_FROM_EXPRESS,
-  };
-}
-
-export default function Home({ actionData, loaderData }: Route.ComponentProps) {
+export default function Home({}: Route.ComponentProps) {
   return (
-    <Welcome
-      guestBook={loaderData.guestBook}
-      guestBookError={actionData?.guestBookError}
-      message={loaderData.message}
+    <>
+    <TabSelector
+      tabs={ tabsArray }
     />
+    <div className="main-content">
+      <Outlet />
+    </div>
+    </>
   );
 }
