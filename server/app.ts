@@ -27,6 +27,7 @@ app.use(
     getLoadContext() {
       return {
         VALUE_FROM_EXPRESS: "Hello from Express",
+        ENGINES_LIST: [],
       };
     },
   }),

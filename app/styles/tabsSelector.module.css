@@ -7,8 +7,8 @@
 }
 
 .active{
-  border-color: blue;
-  color: blue;
+  border-color: #007bff;
+  color: #007bff;
 }
 
 .inactive{
